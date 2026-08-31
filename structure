@@ -1,0 +1,91 @@
+pharmacy-management/
+│
+├── .github/                      # CI/CD Workflows (GitHub Actions: auto build, test, lint khi push/PR)
+│
+├── docker/                       # Cấu hình containerization
+│   ├── Dockerfile                # Image build đa tầng (Multi-stage build) cho client và server
+│   └── docker-compose.yml        # Điều phối môi trường cục bộ (PostgreSQL, Redis, NestJS, Vite)
+│
+├── packages/                     # Thư mục chứa các module/thư viện dùng chung trong Monorepo
+│   └── shared/                   # Workspace chia sẻ code giữa Client và Server (@pharmacy/shared)
+│       ├── src/
+│       │   ├── constants/        # Hằng số tĩnh hệ thống (Regex, Pagination defaults, App configs)
+│       │   ├── enums/            # Các kiểu liệt kê chuẩn (Role: ADMIN/MANAGER/STAFF, OrderStatus...)
+│       │   ├── types/            # TypeScript Interfaces dùng chung (IUser, IProduct, IBatch...)
+│       │   └── schemas/          # Zod / Valibot schemas (Validation logic chung cho cả Frontend & Backend)
+│       └── package.json          # Quản lý dependencies & export module cho shared workspace
+│
+├── apps/                         # Nơi chứa các ứng dụng chính có thể chạy độc lập
+│
+│   ├── server/                   # BACKEND APPLICATION (NestJS - Modular & Clean Architecture)
+│   │   ├── src/
+│   │   │   ├── config/           # Load & validate biến môi trường (.env), database/redis config
+│   │   │   ├── common/           # Các tiện ích cốt lõi dùng chung toàn bộ Backend
+│   │   │   │   ├── decorators/   # Custom decorators (@Roles(), @CurrentUser(), @Public())
+│   │   │   │   ├── filters/      # Global Exception Filters (Bắt và format chuẩn mã lỗi trả về client)
+│   │   │   │   ├── guards/       # Lớp bảo vệ (JwtAuthGuard, RolesGuard kiểm soát RBAC)
+│   │   │   │   ├── interceptors/ # Interceptors biến đổi dữ liệu (Transform Response, Logging, Timeout)
+│   │   │   │   └── middleware/   # Request logger (Morgan/Winston), Rate limiting, CORS
+│   │   │   │
+│   │   │   ├── database/         # Tầng lưu trữ & quản trị dữ liệu
+│   │   │   │   ├── migrations/   # Quản lý lịch sử thay đổi schema DB (TypeORM / Prisma Migrations)
+│   │   │   │   └── seeds/        # Tạo dữ liệu mẫu (1.000+ thuốc, 3.000+ lô hàng, lịch sử bán hàng)
+│   │   │   │
+│   │   │   ├── modules/          # Tầng nghiệp vụ chia theo Domain-Driven Design (DDD)
+│   │   │   │   ├── auth/         # Xác thực người dùng (Login, Refresh Token, Hashing password)
+│   │   │   │   ├── users/        # Quản lý tài khoản, thông tin nhân sự và phân quyền
+│   │   │   │   ├── products/     # Quản lý danh mục, hoạt chất, đơn vị tính, thông tin thuốc
+│   │   │   │   ├── inventory/    # Quản lý kho, nhập hàng, quản lý lô (Batches), hạn sử dụng (FEFO)
+│   │   │   │   ├── pos/          # Điểm bán lẻ, logic trừ kho theo lô, tạo hóa đơn, tính tiền
+│   │   │   │   ├── customers/    # Lưu trữ thông tin khách hàng, tích điểm, lịch sử đơn thuốc
+│   │   │   │   ├── reports/      # Query tổng hợp: Doanh thu, lợi nhuận, tồn đọng (Deadstock)
+│   │   │   │   └── ai-engine/    # TRUNG TÂM XỬ LÝ TRÍ TUỆ NHÂN TẠO & RA QUYẾT ĐỊNH
+│   │   │   │       ├── forecasting/ # Thuật toán dự báo nhu cầu (Time-series / Moving Average)
+│   │   │   │       ├── reorder/     # Thuật toán tính điểm đặt hàng lại (Reorder Point - ROP)
+│   │   │   │       ├── explain/     # LLM Agent tích hợp giải thích lý do số liệu biến động
+│   │   │   │       ├── prompts/     # Quản lý Prompt templates có cấu trúc cho LLM
+│   │   │   │       └── queues/      # BullMQ Worker xử lý tác vụ AI ngầm tránh nghẽn luồng chính
+│   │   │   │
+│   │   │   ├── app.module.ts     # Root Module khởi tạo và liên kết tất cả các module con
+│   │   │   └── main.ts           # Điểm khởi chạy ứng dụng (Entry point, Swagger setup, CORS)
+│   │   │
+│   │   └── test/                 # Chứa E2E tests, Integration tests kiểm tra luồng API
+│   │
+│   └── client/                   # FRONTEND APPLICATION (React + Vite + TypeScript)
+│       ├── src/
+│       │   ├── assets/           # Tài nguyên tĩnh nội bộ (SVG icons, Logos, hình ảnh minh họa)
+│       │   ├── components/       # Các UI Components tái sử dụng đa nơi
+│       │   │   ├── ui/           # Atomic UI (Button, Input, Modal, Badge, DataTable, Dropdown)
+│       │   │   ├── feedback/     # Trạng thái người dùng (LoadingSkeleton, EmptyState, ErrorAlert)
+│       │   │   └── navigation/   # Điều hướng động theo RBAC
+│       │   │       ├── Sidebar/         # Component khung Sidebar hiển thị theo Role
+│       │   │       ├── SidebarItem/     # Item menu con (hỗ trợ nested route, active state)
+│       │   │       └── navigation.config.ts # File cấu hình Menu Matrix ánh xạ theo Role
+│       │   │
+│       │   ├── layouts/          # Khung bao bọc trang theo quyền hạn người dùng
+│       │   │   ├── AdminLayout/   # Layout Admin (Full quyền: Dashboard, Users, AI, Kho, Bán hàng)
+│       │   │   ├── ManagerLayout/ # Layout Manager (Chỉ xem Báo cáo + Hỗ trợ quyết định, không CRUD)
+│       │   │   ├── StaffLayout/   # Layout Staff (Màn hình bán hàng POS, xem tồn kho cơ bản)
+│       │   │   └── AuthLayout/    # Layout cho trang Login / Forgot Password
+│       │   │
+│       │   ├── features/         # Feature-Driven Architecture (Tổ chức theo tính năng kinh doanh)
+│       │   │   ├── auth/          # Login form, xử lý auth state, token storage
+│       │   │   ├── pos/           # Giao diện bán hàng, quét mã, chọn lô tự động FEFO, in bill
+│       │   │   ├── inventory/     # Giao diện nhập hàng, quản lý danh sách thuốc, cảnh báo cận date
+│       │   │   ├── decision/      # Giao diện AI: Biểu đồ dự báo nhu cầu, hộp chat AI Explain
+│       │   │   ├── analytics/     # Dashboard phân tích xu hướng bán, tốc độ luân chuyển kho
+│       │   │   ├── reports/       # Bộ lọc báo cáo doanh thu, xuất dữ liệu Excel/PDF
+│       │   │   └── staff-management/ # Giao diện quản lý danh sách nhân viên, cấp tài khoản
+│       │   │
+│       │   ├── hooks/            # Custom React hooks dùng chung (useDebounce, usePermission, useFEFO)
+│       │   ├── lib/              # Cấu hình thư viện ngoài (Axios client + Interceptors, React Query)
+│       │   ├── routes/           # Hệ thống định tuyến và các Guards bảo vệ URL theo vai trò
+│       │   ├── styles/           # Global styles, Design Tokens, SCSS/Tailwind configurations
+│       │   ├── App.tsx           # Component gốc tích hợp Routing, QueryProvider, ToastProvider
+│       │   └── main.tsx          # Điểm gắn kết React DOM vào file HTML
+│       └── package.json          # Dependencies & Scripts phía Client
+│
+├── package.json                  # Root package.json điều phối toàn bộ Monorepo scripts
+├── pnpm-workspace.yaml           # Định nghĩa cấu trúc Monorepo để pnpm liên kết các package nội bộ
+├── tsconfig.json                 # Base TypeScript configuration cho toàn bộ workspace
+└── README.md                     # Tài liệu hướng dẫn cài đặt, kiến trúc hệ thống và quy trình chạy
