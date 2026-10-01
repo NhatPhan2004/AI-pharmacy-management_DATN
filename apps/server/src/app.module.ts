@@ -1,14 +1,29 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { MedicinesModule } from './medicines/medicines.module';
-import { CategoriesModule } from './categories/categories.module';
-import { InvoicesModule } from './invoices/invoices.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
 
 @Module({
-  imports: [AuthModule, MedicinesModule, CategoriesModule, InvoicesModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DB_HOST', 'localhost'),
+        port: config.get<number>('DB_PORT', 5432),
+        username: config.get<string>('DB_USERNAME', 'postgres'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_DATABASE', 'pharmacy_db'),
+        autoLoadEntities: true,
+        synchronize: false,
+        logging: true,
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
