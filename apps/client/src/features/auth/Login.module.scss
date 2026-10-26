@@ -1,0 +1,864 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.loginWrapper {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: #55595a; /* Màu xám đậm chuẩn của mockup */
+  padding: 30px 20px;
+  box-sizing: border-box;
+}
+
+.loginCard {
+  display: flex;
+  width: 100%;
+  max-width: 880px;
+  min-height: 520px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden; /* Cắt các phần tràn của hình tròn */
+
+  @include mobile {
+    flex-direction: column;
+    max-width: 420px;
+    border-radius: 30px;
+  }
+}
+
+/* ================= NỬA TRÁI (BRANDING PANEL) ================= */
+.leftPanel {
+  flex: 1;
+  background: linear-gradient(155deg, #07382c 0%, #0b4d3c 60%, #115e4b 100%);
+  padding: 30px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  color: #fffbec;
+  position: relative;
+  z-index: 1;
+
+  /* HÌNH ELIP TẠO ĐƯỜNG CONG LỚN LẤN SANG BÊN PHẢI (CHUẨN ẢNH MẪU) */
+  &::after {
+    content: "";
+    position: absolute;
+    top: -10%;
+    right: -120px;
+    width: 240px;
+    height: 120%;
+    background: #0b4d3c;
+    border-radius: 50%;
+    z-index: 2;
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  /* Vầng sáng phụ họa bên góc dưới */
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: -15%;
+    left: -15%;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(
+      circle,
+      rgba(168, 220, 110, 0.18) 0%,
+      rgba(11, 77, 60, 0) 70%
+    );
+    border-radius: 50%;
+    z-index: 1;
+  }
+
+  @include mobile {
+    padding: 36px 20px;
+    border-bottom-left-radius: 35px;
+    border-bottom-right-radius: 35px;
+  }
+}
+
+/* Đảm bảo toàn bộ nội dung bên trái nổi lên trên đường cong */
+.brandHeader,
+.heroContent,
+.outlineBtn,
+.footerNotes {
+  position: relative;
+  z-index: 5;
+}
+
+.brandHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  gap: 12px;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 40px;
+
+  .logoWrapper {
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    padding: 5px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    .logo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .brandInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .brandName {
+    margin: 0;
+    padding: 0;
+    color: #fffbec;
+    font-size: 25px;
+    font-weight: 750;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .brandTagline {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+  }
+}
+
+@include mobile {
+  .brandHeader {
+    gap: 10px;
+
+    .logoWrapper {
+      flex-basis: 48px;
+      width: 48px;
+      height: 48px;
+      border-radius: 11px;
+    }
+
+    .brandName {
+      font-size: 22px;
+    }
+
+    .brandTagline {
+      font-size: 11px;
+      letter-spacing: 0;
+    }
+  }
+}
+
+.heroContent {
+  width: 100%;
+  max-width: 440px;
+  // margin: 12px 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 5;
+
+  .heroImage {
+    display: block;
+    // pointer-events: none;
+    // mix-blend-mode: multiply;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1 / 0.88;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 16px;
+    border: 5px solid rgba(255, 255, 255, 0.95);
+    background: #f7fbf3;
+    box-shadow:
+      0 0 0 1px rgba(198, 226, 119, 0.5),
+      0 18px 40px rgba(0, 0, 0, 0.22),
+      0 0 35px rgba(198, 226, 119, 0.15);
+
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  .heroImage:hover {
+    transform: translateY(-5px) scale(1.015);
+    box-shadow:
+      0 0 0 2px rgba(198, 226, 119, 0.8),
+      0 24px 48px rgba(0, 0, 0, 0.28),
+      0 0 45px rgba(198, 226, 119, 0.22);
+  }
+
+  .heroTitle {
+    font-size: clamp(28px, 2.5vw, 36px);
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    letter-spacing: -0.8px;
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .heroSubtitle {
+    max-width: 360px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroContent {
+    max-width: 100%;
+    margin: 24px 0;
+
+    .heroImage {
+      max-width: 280px;
+      border-radius: 24px;
+      margin-bottom: 20px;
+    }
+
+    .heroTitle {
+      font-size: 28px;
+    }
+
+    .heroSubtitle {
+      font-size: 13px;
+    }
+  }
+}
+
+.outlineBtn {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  padding: 10px 40px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+    transform: translateY(-1px);
+  }
+}
+
+.footerNotes {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+/* ================= NỬA PHẢI (LOGIN FORM) ================= */
+.rightPanel {
+  flex: 1.15;
+  background-color: #fffbec;
+  padding: 40px 60px;
+  @include flex-center;
+  position: relative;
+  z-index: 3;
+
+  @include mobile {
+    padding: 35px 25px;
+  }
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formHeader {
+  text-align: center;
+  margin-bottom: 28px;
+
+  .formTitle {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0b4d3c;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .formSubtitle {
+    font-size: 13px;
+    color: #8a9995;
+    margin: 0;
+  }
+}
+
+.errorBanner {
+  width: 100%;
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* FIX LỖI INPUT USERNAME & PASSWORD BỊ VỠ VÀ TRÈNG CHỮ */
+
+.inputGroup,
+.forgotField {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+
+  .inputField {
+    width: 100%;
+    padding: 13px 40px 13px 44px;
+    background-color: #dbeae5;
+    border: 1.5px solid transparent;
+    border-radius: 30px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #1e293b;
+    outline: none;
+    box-sizing: border-box;
+    display: block;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: #7b9e95;
+      font-size: 14px;
+    }
+
+    &:focus {
+      background-color: #fffbec;
+      border-color: #0b4d3c;
+      box-shadow: 0 0 0 3px rgba(11, 77, 60, 0.15);
+    }
+  }
+
+  .inputIcon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #0b4d3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .togglePassword {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #7b9e95;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    z-index: 2;
+
+    &:hover {
+      color: #0b4d3c;
+    }
+  }
+}
+
+/* Chừa khoảng cách phù hợp cho icon trong form quên mật khẩu */
+.forgotField {
+  .inputField {
+    padding-left: 44px;
+    padding-right: 18px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #7b9e95;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+.forgotPassword {
+  display: inline-block;
+  width: auto;
+  flex: 0 0 auto;
+  align-self: flex-end;
+
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #0b4d3c;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    color: #2ecc71;
+    text-decoration: underline;
+  }
+}
+
+.submitBtn {
+  width: 150px;
+  margin: 0 auto;
+  padding: 12px 0;
+  background-color: #0b4d3c;
+  color: #ffffff;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(11, 77, 60, 0.35);
+  transition: all 0.25s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #0f614c;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(11, 77, 60, 0.45);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.bottomText {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #7b9e95;
+  text-align: center;
+
+  a {
+    color: #0b4d3c;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.forgotPasswordContent {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  color: #0b4d3c;
+  animation: forgotFadeIn 0.25s ease;
+}
+
+.forgotTitle {
+  margin: 0 0 12px;
+  color: #0b4d3c;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+
+.forgotDescription {
+  margin: 0 0 24px;
+  color: #8a9995;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.forgotForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.forgotSubmit {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 4px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 30px;
+  background: #0b4d3c;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(11, 77, 60, 0.25);
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: #0f614c;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(11, 77, 60, 0.25);
+    outline-offset: 3px;
+  }
+}
+
+.backToLogin {
+  display: block;
+  width: fit-content;
+  margin: 18px auto 0;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #7b9e95;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #0b4d3c;
+    text-decoration: underline;
+  }
+}
+
+@keyframes forgotFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forgotPasswordContent {
+    animation: none;
+  }
+}
+
+/* ================= CONTACT ADMIN ================= */
+
+.contactAdminContent {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  color: #0b4d3c;
+  animation: forgotFadeIn 0.25s ease;
+}
+
+.contactAdminHeader {
+  margin-bottom: 20px;
+}
+
+.contactAdminIcon {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #dbeae5;
+  color: #0b4d3c;
+}
+
+.contactAdminTitle {
+  margin: 0 0 8px;
+  color: #0b4d3c;
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+.contactAdminDescription {
+  margin: 0;
+  color: #8a9995;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.contactAdminForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.contactField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+
+  label {
+    color: #536e65;
+    font-size: 12px;
+    font-weight: 600;
+
+    span {
+      color: #8a9995;
+      font-weight: 400;
+    }
+  }
+}
+
+.contactInputWrapper,
+.contactSelectWrapper,
+.contactTextareaWrapper {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contactInput,
+.contactSelect,
+.contactTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid transparent;
+  background: #dbeae5;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: #7b9e95;
+    opacity: 1;
+  }
+
+  &:hover {
+    border-color: #c3d9d0;
+  }
+
+  &:focus {
+    background: #fffbec;
+    border-color: #0b4d3c;
+    box-shadow: 0 0 0 3px rgba(11, 77, 60, 0.1);
+  }
+}
+
+.contactInput {
+  height: 46px;
+  padding: 0 14px 0 43px;
+  border-radius: 30px;
+}
+
+.contactInputIcon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b4d3c;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.contactSelect {
+  height: 46px;
+  padding: 0 40px 0 16px;
+  border-radius: 30px;
+  appearance: none;
+  cursor: pointer;
+
+  &:invalid {
+    color: #7b9e95;
+  }
+
+  option {
+    color: #1e293b;
+    background: #ffffff;
+  }
+}
+
+.contactSelectIcon {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  color: #0b4d3c;
+  pointer-events: none;
+}
+
+.contactTextareaWrapper {
+  position: relative;
+}
+
+.contactTextareaIcon {
+  position: absolute;
+  top: 14px;
+  left: 15px;
+  color: #0b4d3c;
+  pointer-events: none;
+}
+
+.contactTextarea {
+  min-height: 86px;
+  padding: 12px 14px 12px 43px;
+  border-radius: 16px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.contactCharCount {
+  align-self: flex-end;
+  color: #8a9995;
+  font-size: 10px;
+  text-align: right;
+}
+
+.contactFeedback {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #e8f2ed;
+  color: #0b4d3c;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.contactFormError {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.forgotSubmit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contactSpinner {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 7px;
+  animation: contactSpin 1s linear infinite;
+}
+
+@keyframes contactSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.contactPrivacyNote {
+  margin: 16px 0 0;
+  color: #8a9995;
+  font-size: 10px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.contactAdminContent .backToLogin {
+  margin-top: 14px;
+}
+
+.contactAdminLink {
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #7b9e95;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    color: #0b4d3c;
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #0b4d3c;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contactAdminTitle {
+    font-size: 25px;
+  }
+
+  .contactAdminHeader {
+    margin-bottom: 18px;
+  }
+
+  .contactAdminForm {
+    gap: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactAdminContent {
+    animation: none;
+  }
+
+  .contactSpinner {
+    animation: none;
+  }
+}

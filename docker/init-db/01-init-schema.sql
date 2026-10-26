@@ -181,10 +181,10 @@ CREATE TABLE invoice_items (
 
 -- 6. CHỈ MỤC TỐI ƯU HIỆU NĂNG TRUY VẤN (INDEXES)
 
-CREATE INDEX idx_batches_fefo ON batches(product_id, expiry_date ASC)
+CREATE INDEX idx_batches_fefo ON batches(product_id, expiry_date ASC) 
 WHERE quantity_remaining > 0 AND status = 'ACTIVE';
 
-CREATE INDEX idx_product_units_barcode ON product_units(barcode)
+CREATE INDEX idx_product_units_barcode ON product_units(barcode) 
 WHERE barcode IS NOT NULL;
 
 CREATE INDEX idx_products_active_ingredients ON products USING gin(active_ingredients);

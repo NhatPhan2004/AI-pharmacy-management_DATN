@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Role } from '../../modules/users/entities/role.entity';
 import { User } from '../../modules/users/entities/user.entity';
 
-export async function runInitialSeed(dataSource: DataSource) {
+export async function runInitialSeed(dataSource: DataSource): Promise<void> {
   const roleRepo = dataSource.getRepository(Role);
   const userRepo = dataSource.getRepository(User);
 
@@ -20,7 +20,7 @@ export async function runInitialSeed(dataSource: DataSource) {
     },
     {
       code: 'STAFF',
-      name: 'Dược sĩ / Nhân viên',
+      name: 'Dược sĩ bán lẻ',
       description: 'Thực hiện bán lẻ POS và tra cứu kho hàng',
     },
   ];
@@ -32,24 +32,63 @@ export async function runInitialSeed(dataSource: DataSource) {
     }
   }
 
-  const adminRole = await roleRepo.findOne({ where: { code: 'ADMIN' } });
-  if (adminRole) {
-    const existingAdmin = await userRepo.findOne({
-      where: { username: 'admin' },
+  const targetPassword = '666666';
+  const defaultPassword = await bcrypt.hash(targetPassword, 10);
+
+  const sampleUsers = [
+    {
+      username: 'admin',
+      fullName: 'System Administrator',
+      roleCode: 'ADMIN',
+      phone: '0979797979',
+    },
+    {
+      username: 'manager',
+      fullName: 'Quản Lý Cửa Hàng',
+      roleCode: 'MANAGER',
+      phone: '0868686868',
+    },
+    {
+      username: 'staff',
+      fullName: 'Dược Sĩ Bán Hàng',
+      roleCode: 'STAFF',
+      phone: '0939393939',
+    },
+  ];
+
+  for (const u of sampleUsers) {
+    const role = await roleRepo.findOne({ where: { code: u.roleCode } });
+    if (!role) continue;
+
+    const existing = await userRepo.findOne({
+      where: { username: u.username },
     });
-    if (!existingAdmin) {
-      const password_hash = await bcrypt.hash('Admin@123456', 10);
+
+    if (!existing) {
       await userRepo.save(
         userRepo.create({
-          username: 'admin',
-          password_hash,
-          full_name: 'System Administrator',
-          phone: '0901234567',
-          role_id: adminRole.id,
+          username: u.username,
+          password_hash: defaultPassword,
+          full_name: u.fullName,
+          phone: u.phone,
+          role_id: role.id,
           is_active: true,
         }),
       );
-      console.log('Seeded Admin account: admin / Admin@123456');
+      console.log(
+        `[SEED] Đã tạo mới tài khoản: ${u.username} (${u.roleCode}) - Mật khẩu: ${targetPassword}`,
+      );
+    } else {
+      existing.password_hash = defaultPassword;
+      existing.role_id = role.id;
+      existing.full_name = u.fullName;
+      existing.phone = u.phone;
+      existing.is_active = true;
+
+      await userRepo.save(existing);
+      console.log(
+        `[SEED] Đã đồng bộ mật khẩu tài khoản: ${u.username} (${u.roleCode}) -> ${targetPassword}`,
+      );
     }
   }
 }
