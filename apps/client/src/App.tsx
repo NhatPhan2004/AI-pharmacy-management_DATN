@@ -1,11 +1,17 @@
-import LoginPage from "./features/auth/LoginPage";
 
-function App() {
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./features/auth/context/AuthContext";
+import { AppRoutes } from "./routes/AppRoutes";
+
+export const App: React.FC = () => {
   return (
-    <>
-      <LoginPage />
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

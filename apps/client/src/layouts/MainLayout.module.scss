@@ -1,0 +1,17 @@
+.appContainer {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #fffbec;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 24px;
+}
+
+.contentArea {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  background-color: transparent;
+}

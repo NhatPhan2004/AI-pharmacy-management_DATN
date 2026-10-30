@@ -6,7 +6,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { User } from './modules/users/entities/user.entity';
 import { Role } from './modules/users/entities/role.entity';
-// import { runInitialSeed } from './database/seeds/initial.seed';
 
 @Module({
   imports: [
@@ -32,7 +31,5 @@ import { Role } from './modules/users/entities/role.entity';
 export class AppModule implements OnApplicationBootstrap {
   constructor(private readonly dataSource: DataSource) {}
 
-  async onApplicationBootstrap(): Promise<void> {
-    // await runInitialSeed(this.dataSource);
-  }
+  async onApplicationBootstrap(): Promise<void> {}
 }

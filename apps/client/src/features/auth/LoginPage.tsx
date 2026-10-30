@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import logoImg from "../../assets/logo.png";
 import logoLogin from "../../assets/bg_login.png";
 import styles from "./Login.module.scss";
 
 import { useLogin } from "./hooks/useLogin";
+import { useAuth } from "./hooks/useAuth";
 import { useForgotPassword } from "./hooks/useForgotPassword";
 import { useContactAdmin } from "./hooks/useContactAdmin";
 
@@ -16,6 +18,8 @@ type AuthView = "login" | "forgot-password" | "contact-admin";
 
 export default function LoginPage() {
   const [authView, setAuthView] = useState<AuthView>("login");
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
   const login = useLogin();
   const forgotPassword = useForgotPassword();
@@ -39,6 +43,13 @@ export default function LoginPage() {
     contactAdmin.resetContactMessage();
     forgotPassword.resetForgotMessage();
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = user.role === "STAFF" ? "/pos" : "/dashboard";
+      navigate(redirectPath, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className={styles.loginWrapper}>

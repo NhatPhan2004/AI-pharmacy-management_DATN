@@ -4,7 +4,7 @@
 .loginWrapper {
   @include flex-center;
   min-height: 100vh;
-  background-color: #55595a; /* Màu xám đậm chuẩn của mockup */
+  background-color: #55595a;
   padding: 30px 20px;
   box-sizing: border-box;
 }
@@ -18,7 +18,7 @@
   border-radius: 24px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
   position: relative;
-  overflow: hidden; /* Cắt các phần tràn của hình tròn */
+  overflow: hidden;
 
   @include mobile {
     flex-direction: column;
@@ -27,7 +27,6 @@
   }
 }
 
-/* ================= NỬA TRÁI (BRANDING PANEL) ================= */
 .leftPanel {
   flex: 1;
   background: linear-gradient(155deg, #07382c 0%, #0b4d3c 60%, #115e4b 100%);
@@ -41,7 +40,6 @@
   position: relative;
   z-index: 1;
 
-  /* HÌNH ELIP TẠO ĐƯỜNG CONG LỚN LẤN SANG BÊN PHẢI (CHUẨN ẢNH MẪU) */
   &::after {
     content: "";
     position: absolute;
@@ -58,7 +56,6 @@
     }
   }
 
-  /* Vầng sáng phụ họa bên góc dưới */
   &::before {
     content: "";
     position: absolute;
@@ -82,7 +79,6 @@
   }
 }
 
-/* Đảm bảo toàn bộ nội dung bên trái nổi lên trên đường cong */
 .brandHeader,
 .heroContent,
 .outlineBtn,
@@ -280,7 +276,6 @@
   text-transform: uppercase;
 }
 
-/* ================= NỬA PHẢI (LOGIN FORM) ================= */
 .rightPanel {
   flex: 1.15;
   background-color: #fffbec;
@@ -339,8 +334,6 @@
   flex-direction: column;
   gap: 16px;
 }
-
-/* FIX LỖI INPUT USERNAME & PASSWORD BỊ VỠ VÀ TRÈNG CHỮ */
 
 .inputGroup,
 .forgotField {
@@ -407,7 +400,6 @@
   }
 }
 
-/* Chừa khoảng cách phù hợp cho icon trong form quên mật khẩu */
 .forgotField {
   .inputField {
     padding-left: 44px;
@@ -587,8 +579,6 @@
     animation: none;
   }
 }
-
-/* ================= CONTACT ADMIN ================= */
 
 .contactAdminContent {
   width: 100%;
