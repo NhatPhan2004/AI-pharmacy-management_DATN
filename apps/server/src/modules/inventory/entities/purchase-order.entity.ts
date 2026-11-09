@@ -3,61 +3,64 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
   OneToMany,
-  Relation,
+  JoinColumn,
 } from 'typeorm';
 import { PurchaseOrderStatus } from '@pharmacy/shared';
+import { Supplier } from '../../suppliers/entities/supplier.entity';
 import { PurchaseOrderItem } from './purchase-order-item.entity';
 
 @Entity('purchase_orders')
 export class PurchaseOrder {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'po_code', type: 'varchar', length: 50, unique: true })
+  @Column({ name: 'po_code', unique: true })
   poCode: string;
 
-  @Column({ name: 'supplier_id', type: 'bigint' })
+  @Column({ name: 'supplier_id', nullable: true })
   supplierId: string;
 
-  @Column({ name: 'creator_id', type: 'bigint' })
+  @ManyToOne(() => Supplier, { nullable: true })
+  @JoinColumn({ name: 'supplier_id' })
+  supplier?: Supplier;
+
+  @Column({ name: 'creator_id', nullable: true })
   creatorId: string;
 
-  @Column({ name: 'reorder_plan_id', type: 'bigint', nullable: true })
-  reorderPlanId?: string;
-
   @Column({
-    type: 'varchar',
-    length: 20,
-    default: PurchaseOrderStatus.DRAFT,
+    type: 'enum',
+    enum: PurchaseOrderStatus,
+    default: PurchaseOrderStatus.COMPLETED,
   })
   status: PurchaseOrderStatus;
 
   @Column({
     name: 'total_cost',
     type: 'decimal',
-    precision: 12,
+    precision: 15,
     scale: 2,
     default: 0,
   })
   totalCost: number;
 
-  @Column({
-    name: 'delivery_date',
-    type: 'timestamp with time zone',
-    nullable: true,
-  })
-  deliveryDate?: Date;
+  @Column({ name: 'invoice_number', nullable: true })
+  invoiceNumber: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+  @Column({ type: 'text', nullable: true })
+  note: string;
+
+  @Column({ name: 'delivery_date', type: 'timestamp', nullable: true })
+  deliveryDate: Date;
+
+  @OneToMany(() => PurchaseOrderItem, (item) => item.purchaseOrder)
+  items: PurchaseOrderItem[];
+
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @OneToMany(
-    (): typeof PurchaseOrderItem => PurchaseOrderItem,
-    (item: PurchaseOrderItem): Relation<PurchaseOrder> => item.purchaseOrder,
-    {
-      cascade: true,
-    },
-  )
-  items: Relation<PurchaseOrderItem>[];
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

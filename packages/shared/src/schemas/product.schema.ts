@@ -1,28 +1,22 @@
 import { z } from "zod";
 
 export const CreateProductUnitSchema = z.object({
-  unitName: z.string().min(1, "The unit name is required").max(50),
-  conversionToBase: z
-    .number()
-    .int()
-    .positive("The conversion factor must be a positive integer >= 1"),
-  sellingPrice: z
-    .number()
-    .positive("The selling price must be a positive number"),
-  isBaseUnit: z.boolean().default(false),
+  unitName: z.string().min(1, "Tên đơn vị không được rỗng"),
+  conversionToBase: z.number().int().min(1, "Tỉ lệ quy đổi phải >= 1"),
+  sellingPrice: z.number().min(0, "Giá bán không được âm"),
+  isBaseUnit: z.boolean(),
 });
 
 export const CreateProductSchema = z.object({
-  categoryId: z.string().min(1, "The category is required"),
-  sku: z.string().min(3, "The SKU must be at least 3 characters long").max(50),
-  name: z.string().min(2, "The product name is required").max(100),
+  sku: z.string().min(3, "Mã SKU tối thiểu 3 ký tự"),
+  name: z.string().min(2, "Tên thuốc không được để trống"),
+  categoryId: z.string().min(1, "Vui lòng chọn danh mục"),
+  safetyStockThreshold: z.number().int().min(0).default(20),
   usageInstructions: z.string().optional(),
   defaultStorage: z.string().optional(),
-  isActive: z.boolean().default(true),
-  safetyStockThreshold: z.number().int().nonnegative().default(20),
   units: z
     .array(CreateProductUnitSchema)
-    .min(1, "At least one unit is required"),
+    .min(1, "Cần ít nhất một đơn vị cơ sở"),
 });
 
 export type CreateProductInput = z.infer<typeof CreateProductSchema>;

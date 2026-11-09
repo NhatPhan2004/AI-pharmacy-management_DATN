@@ -1,0 +1,690 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  font-family: "Be Vietnam Pro", sans-serif;
+}
+
+.modalContent {
+  background: #fffbec;
+  border-radius: 16px;
+  width: 95%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #c7c9ca;
+    padding-bottom: 14px;
+
+    .modalTitle {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 600;
+      color: #1b3a37;
+    }
+
+    .modalSubtitle {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      font-weight: 400;
+      color: #64748b;
+    }
+
+    .closeBtn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: color 0.15s;
+      &:hover {
+        color: #0f172a;
+      }
+    }
+  }
+
+  .formBody {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .formRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .formGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .formLabel {
+        font-size: 13px;
+        font-weight: 500;
+        color: #334155;
+
+        .required {
+          color: #ef4444;
+          margin-left: 2px;
+        }
+      }
+
+      .formInput,
+      input,
+      select,
+      .formSelect {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 400;
+        color: #1e293b;
+        background: #ffffff;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+
+        &:focus {
+          border-color: #1b3a37;
+          box-shadow: 0 0 0 2px rgba(27, 58, 55, 0.1);
+        }
+
+        &::placeholder {
+          color: #94a3b8;
+          font-weight: 400;
+        }
+      }
+
+      select,
+      .formSelect {
+        cursor: pointer;
+      }
+    }
+
+    .unitSection {
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .unitHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .unitSectionTitle {
+          display: block;
+          font-size: 14px;
+          font-weight: 600;
+          color: #1b3a37;
+        }
+
+        .unitSectionSub {
+          font-size: 12px;
+          font-weight: 400;
+          color: #64748b;
+        }
+
+        .addUnitBtn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #1b3a37;
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-size: 12.5px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            background: #fffbec;
+            border-color: #94a3b8;
+          }
+        }
+      }
+
+      .unitTableHead {
+        display: grid;
+        grid-template-columns: 2fr 1.6fr 1.8fr 90px 32px;
+        gap: 10px;
+        padding: 4px 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        border-bottom: 1px solid #e2e8f0;
+
+        span {
+          white-space: nowrap;
+        }
+      }
+
+      .unitList {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .unitRow {
+        display: grid;
+        grid-template-columns: 2fr 1.3fr 1.7fr 105px 36px;
+        gap: 10px;
+        align-items: center;
+        background: #ffffff;
+        padding: 6px 8px;
+        border-radius: 10px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+
+        &:hover {
+          border-color: #cbd5e1;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .inputWrapper {
+          position: relative;
+          width: 100%;
+
+          .formInput {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 400;
+            color: #1e293b;
+            background: #ffffff;
+            outline: none;
+            transition: all 0.2s;
+
+            &:focus {
+              border-color: #1b3a37;
+              box-shadow: 0 0 0 3px rgba(27, 58, 55, 0.08);
+            }
+
+            &::placeholder {
+              color: #94a3b8;
+              font-size: 12.5px;
+            }
+
+            &.disabledInput {
+              background: #f1f5f9;
+              color: #64748b;
+              border-color: #e2e8f0;
+              cursor: not-allowed;
+              font-weight: 500;
+            }
+          }
+        }
+
+        .tagWrapper {
+          display: flex;
+          justify-content: center;
+
+          .baseTag {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            border-radius: 20px;
+            white-space: nowrap;
+          }
+
+          .convertTag {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11.5px;
+            font-weight: 500;
+            padding: 4px 10px;
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            border-radius: 20px;
+            white-space: nowrap;
+          }
+        }
+
+        .actionWrapper {
+          display: flex;
+          justify-content: center;
+
+          .deleteUnitBtn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #ff6464;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+
+            &:hover {
+              color: #dc2626;
+              background: #fef2f2;
+              border-color: #fecaca;
+            }
+          }
+        }
+      }
+
+      .unitHintBox {
+        font-size: 12px;
+        font-weight: 400;
+        color: #475569;
+        background: #f1f5f9;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border-left: 3px solid #1b3a37;
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    border-top: 1px solid #d5d8dc;
+    padding-top: 16px;
+
+    button {
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btnCancel {
+      background: #fffbec;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      &:hover {
+        background: #f8fafc;
+      }
+    }
+
+    .btnSubmit {
+      background: #073b3a;
+      border: 1px solid #073b3a;
+      color: #fffbec;
+      &:hover {
+        background: #26524e;
+      }
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .errorBox {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+}
+.deleteDialogCard {
+  max-width: 440px !important;
+  padding: 24px 26px !important;
+  border-radius: 20px !important;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.16) !important;
+  animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  .dialogCloseBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #334155;
+    }
+  }
+
+  .deleteDialogBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .warningIconBadge {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: #f4cbcb;
+      border: 1px solid #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08);
+    }
+
+    .dialogTitle {
+      font-size: 17px;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+    }
+
+    .dialogDescription {
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.55;
+      margin: 0 0 14px 0;
+
+      .highlightText {
+        font-weight: 600;
+        color: #0f172a;
+      }
+
+      .skuTag {
+        font-family: monospace;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+    }
+
+    .noteBox {
+      font-size: 12px;
+      color: #64748b;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      width: 100%;
+      box-sizing: border-box;
+
+      strong {
+        color: #334155;
+      }
+    }
+  }
+
+  .dialogActionRow {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dialogBtnCancel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+
+      &:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+      }
+    }
+
+    .dialogBtnDanger {
+      background: #dc2626;
+      border: 1px solid #dc2626;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+
+      &:hover {
+        background: #b91c1c;
+        border-color: #b91c1c;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.receiptModalCard {
+  max-width: 920px;
+  padding: 24px 28px;
+}
+
+.receiptModalHeader {
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 14px;
+
+  .headerTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .receiptCodeBadge {
+      font-family: monospace;
+      background: #f1f5f9;
+      color: #1b3a37;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+  }
+
+  p {
+    margin-top: 4px;
+  }
+}
+
+.receiptMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: #f8fafc;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin: 16px 0;
+  border: 1px solid #e2e8f0;
+
+  .metaItem {
+    .metaLabel {
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .metaValue {
+      font-size: 13.5px;
+      color: #0f172a;
+      display: block;
+      margin-top: 2px;
+
+      &.code {
+        font-family: monospace;
+      }
+    }
+
+    .statusSuccessBadge {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 12px;
+      color: #15803d;
+      background: #dcfce7;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+  }
+}
+
+.receiptNoteText {
+  font-size: 12.5px;
+  color: #475569;
+  margin: 0 0 14px 0;
+  font-style: italic;
+}
+
+.receiptTableContainer {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  .receiptDetailTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+
+    th {
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+      text-align: left;
+
+      &.alignRight {
+        text-align: right;
+      }
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f5f9;
+
+      &.alignRight {
+        text-align: right;
+      }
+      &.colBatch {
+        font-weight: 600;
+        font-family: monospace;
+      }
+      &.colBaseQty {
+        color: #0284c7;
+        font-weight: 600;
+      }
+      &.colTotal {
+        font-weight: 600;
+        color: #166534;
+      }
+    }
+
+    .prodTitle {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .prodSku {
+      font-size: 11px;
+      color: #64748b;
+      font-family: monospace;
+    }
+    .dateBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+  }
+}
+
+.receiptSummaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+
+  .totalItemsText {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .totalPaymentGroup {
+    text-align: right;
+
+    span {
+      font-size: 13px;
+      color: #64748b;
+      margin-right: 10px;
+    }
+
+    strong {
+      font-size: 18px;
+      color: #166534;
+    }
+  }
+}

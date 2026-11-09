@@ -72,7 +72,7 @@ export class AuthService {
       secret:
         this.configService.get<string>('JWT_SECRET') ||
         'pharm_ai_access_secret',
-      expiresIn: '1h',
+      expiresIn: '5h',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret:

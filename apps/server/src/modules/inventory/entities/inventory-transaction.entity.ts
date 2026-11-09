@@ -14,8 +14,8 @@ export class InventoryTransaction {
   @Column({ name: 'batch_id', type: 'bigint' })
   batchId: string;
 
-  @Column({ name: 'user_id', type: 'bigint' })
-  userId: string;
+  @Column({ name: 'user_id', type: 'varchar', length: 100, nullable: true })
+  userId: string | null;
 
   @Column({ name: 'transaction_type', type: 'varchar', length: 20 })
   transactionType: InventoryTransactionType;
@@ -26,12 +26,21 @@ export class InventoryTransaction {
   @Column({ name: 'remaining_quantity', type: 'int' })
   remainingQuantity: number;
 
-  @Column({ name: 'reference_type', type: 'varchar', length: 20 })
+  @Column({
+    name: 'reference_type',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   referenceType: string;
 
-  @Column({ name: 'reference_id', type: 'bigint' })
+  @Column({
+    name: 'reference_id',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   referenceId: string;
-
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
 }

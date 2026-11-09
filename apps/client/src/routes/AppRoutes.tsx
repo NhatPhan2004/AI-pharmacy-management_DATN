@@ -5,6 +5,8 @@ import { MainLayout } from "@/layouts/MainLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { DashboardRouter } from "@/features/dashboard/DashboardRouter";
 import { RoleType } from "@pharmacy/shared";
+import { PharmacyManagementPage } from "@/features/inventory/page/PharmacyManagementPage";
+import { InventoryWarehousePage } from "@/features/inventory/page/InventoryWarehousePage";
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -17,13 +19,10 @@ export const AppRoutes: React.FC = () => {
           <Route path="/dashboard" element={<DashboardRouter />} />
 
           <Route element={<ProtectedRoute allowedRoles={[RoleType.ADMIN]} />}>
-            <Route
-              path="/inventory"
-              element={<div>Màn hình Quản lý Kho & Nhập Lô hàng</div>}
-            />
+            <Route path="/inventory" element={<InventoryWarehousePage />} />
             <Route
               path="/admin/pharmacy"
-              element={<div>Màn hình Quản lý Danh mục Thuốc</div>}
+              element={<PharmacyManagementPage />}
             />
             <Route path="/admin/staff" element={<div>Quản lý Nhân sự</div>} />
           </Route>

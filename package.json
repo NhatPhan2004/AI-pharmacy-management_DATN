@@ -4,8 +4,11 @@
   "private": true,
   "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "server": "pnpm --filter server run start:dev",
-    "client": "pnpm --filter client run dev",
+    "dev": "concurrently -k -n \"SERVER,CLIENT\" -c \"cyan.bold,green.bold\" \"pnpm -C apps/server start:dev --preserveWatchOutput\" \"pnpm -C apps/CLIENT dev --clearScreen false\"",
+    "dev:server": "pnpm -C apps/server start:dev",
+    "dev:client": "pnpm -C apps/client dev",
+    "server": "pnpm -C apps/server start:dev",
+    "client": "pnpm -C apps/client dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint"
   }

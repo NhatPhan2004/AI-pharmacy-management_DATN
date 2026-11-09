@@ -1,0 +1,358 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pageHeader {
+  .title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #073b3a;
+    letter-spacing: -0.2px;
+  }
+  .subtitle {
+    margin: 4px 0 0 0;
+    font-size: 16px;
+    font-weight: 400;
+    color: #64748b;
+  }
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  .metricCard {
+    border-radius: 16px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    border: 2px solid transparent;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    &.cardPrimary {
+      background: linear-gradient(135deg, #86f9a4 0%, #ffffff 100%);
+      border-color: #dcfce7;
+      .iconWrap {
+        background: #15803d;
+        color: #ffffff;
+      }
+      .metricValue {
+        color: #166534;
+      }
+    }
+
+    &.cardWarning {
+      background: linear-gradient(135deg, #f9d9a5 0%, #ffffff 100%);
+      border-color: #fef3c7;
+      .iconWrap {
+        background: #d97706;
+        color: #ffffff;
+      }
+      .metricValue {
+        color: #b45309;
+      }
+    }
+
+    &.cardDanger {
+      background: linear-gradient(135deg, #f8cacd 0%, #ffffff 100%);
+      border-color: #ffe4e6;
+      .iconWrap {
+        background: #e11d48;
+        color: #ffffff;
+      }
+      .metricValue {
+        color: #be123c;
+      }
+    }
+
+    .iconWrap {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .metricInfo {
+      display: flex;
+      flex-direction: column;
+      .metricLabel {
+        font-size: 16px;
+        font-weight: 700;
+        color: #525f71;
+      }
+      .metricValue {
+        font-size: 24px;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+.tableCard {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid #d9dee3;
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+
+    .searchForm {
+      position: relative;
+      flex: 1;
+      max-width: 360px;
+
+      .searchIcon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+      }
+
+      input {
+        width: 100%;
+        padding: 9px 14px 9px 38px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        background: #f8fafc;
+        transition: all 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: #073b3a;
+          background: #ffffff;
+        }
+
+        &::placeholder {
+          color: #94a3b8;
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btnSecondary {
+        background: #fffbec;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+
+        &:hover {
+          background: #f8fafc;
+        }
+      }
+      .btnPrimary {
+        background: #073b3a;
+        border: none;
+        color: #fffbec;
+        &:hover {
+          background: #26524e;
+        }
+      }
+    }
+  }
+
+  .categoryTabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 2px solid #dbdddf;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+
+    .tabItem {
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+
+      &.tabActive {
+        background: #1b3a37;
+        color: #fffbec;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .tableResponsive {
+    overflow-x: auto;
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12.5px;
+
+      th {
+        padding: 12px 14px;
+        color: #073b3a;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+        border-bottom: 0.5px solid #e2e8f0;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #f8fafc;
+        vertical-align: middle;
+      }
+
+      .drugCell {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        .drugName {
+          font-weight: 600;
+          color: #0f172a;
+          font-size: 13.5px;
+        }
+
+        .metaRow {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .skuText {
+            font-family: monospace;
+            font-size: 11px;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 1px 6px;
+            border-radius: 4px;
+          }
+
+          .activeText {
+            font-size: 12px;
+            color: #94a3b8;
+          }
+        }
+      }
+
+      .categoryBadge {
+        font-size: 12.5px;
+        color: #475569;
+        background: #f8fafc;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid #f1f5f9;
+      }
+
+      .stockHighlight {
+        font-weight: 600;
+        color: #1e293b;
+      }
+      .stockSub {
+        font-size: 12px;
+        color: #64748b;
+        margin-left: 4px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 500;
+
+        &.badgeSuccess {
+          background: #dcfce7;
+          color: #15803d;
+        }
+        &.badgeWarning {
+          background: #fef3c7;
+          color: #b45309;
+        }
+        &.badgeDanger {
+          background: #fee2e2;
+          color: #b91c1c;
+        }
+        &.badgeDark {
+          background: #f1f5f9;
+          color: #64748b;
+        }
+      }
+
+      .actionButtons {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+
+        .iconBtn {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          color: #64748b;
+          border-radius: 6px;
+          padding: 6px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.15s;
+
+          &:hover {
+            background: #f8fafc;
+            color: #1b3a37;
+            border-color: #cbd5e1;
+          }
+          &.btnDanger:hover {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+          }
+        }
+      }
+
+      .textCenter {
+        text-align: center;
+      }
+    }
+  }
+}

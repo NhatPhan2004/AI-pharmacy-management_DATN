@@ -13,7 +13,7 @@ export default defineConfig({
     port: 5173,
     allowedHosts: ["pharmai.pnn"],
     proxy: {
-      "/api": {
+      "/api/v1": {
         target: "http://localhost:4000",
         changeOrigin: true,
         secure: false,

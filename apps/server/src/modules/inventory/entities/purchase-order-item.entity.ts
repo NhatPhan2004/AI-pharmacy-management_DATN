@@ -13,7 +13,7 @@ export class PurchaseOrderItem {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: string;
 
-  @Column({ name: 'purchase_order_id', type: 'bigint' })
+  @Column({ name: 'purchase_order_id', type: 'uuid' })
   purchaseOrderId: string;
 
   @Column({ name: 'unit_id', type: 'bigint' })
