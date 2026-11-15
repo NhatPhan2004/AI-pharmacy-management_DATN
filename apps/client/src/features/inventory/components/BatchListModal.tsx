@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { X, Calendar, AlertCircle, Layers, CheckCircle2 } from "lucide-react";
+import {
+  X,
+  Calendar,
+  AlertCircle,
+  Layers,
+  CheckCircle2,
+  FileText,
+} from "lucide-react";
 
 import type { IProductItem, IBatchItem } from "@pharmacy/shared";
 import { pharmacyApi } from "../api/pharmacy.api";
@@ -88,10 +95,12 @@ export const BatchListModal: React.FC<Props> = ({ product, onClose }) => {
         {/* Header */}
         <div className={styles.header}>
           <div>
-            <h3 className={styles.title}>Chi tiết lô hàng trong kho (FEFO)</h3>
+            <h3 className={styles.title}>
+              Chi tiết sản phẩm & lô hàng trong kho (FEFO)
+            </h3>
 
             <p className={styles.subtitle}>
-              Thuốc: <strong>{product.name}</strong> ({product.sku})
+              Sản phẩm: <strong>{product.name}</strong> ({product.sku})
               <span className={styles.separator}>|</span>
               Đơn vị cơ sở: <strong>{product.baseUnitName}</strong>
             </p>
@@ -109,6 +118,28 @@ export const BatchListModal: React.FC<Props> = ({ product, onClose }) => {
 
         {/* Content */}
         <div className={styles.content}>
+          {/* Khối thông tin mô tả / hướng dẫn sử dụng */}
+          <div className={styles.descriptionCard}>
+            <div className={styles.descriptionHeader}>
+              <FileText size={15} />
+              <span>Hướng dẫn sử dụng / Hoạt chất & Mô tả</span>
+            </div>
+            <p className={styles.descriptionText}>
+              {product.usageInstructions?.trim() ||
+                "Chưa cập nhật hướng dẫn sử dụng cho sản phẩm này."}
+            </p>
+            {product.defaultStorage?.trim() && (
+              <p className={styles.storageText}>
+                <strong>Bảo quản:</strong> {product.defaultStorage}
+              </p>
+            )}
+          </div>
+
+          <div className={styles.sectionHeading}>
+            <Layers size={15} />
+            <span>Danh sách các lô nhập kho</span>
+          </div>
+
           {loading ? (
             <div className={styles.loading}>Đang tải danh sách lô...</div>
           ) : errorMessage ? (
@@ -119,7 +150,7 @@ export const BatchListModal: React.FC<Props> = ({ product, onClose }) => {
           ) : batches.length === 0 ? (
             <div className={styles.empty}>
               <Layers size={36} />
-              <p>Chưa có lô hàng nào được nhập cho loại thuốc này.</p>
+              <p>Chưa có lô hàng nào được nhập cho loại sản phẩm này.</p>
             </div>
           ) : (
             <div className={styles.tableResponsive}>

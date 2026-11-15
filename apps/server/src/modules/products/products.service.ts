@@ -306,10 +306,28 @@ export class ProductsService {
         );
       }
 
+      let validCategoryId = input.categoryId;
+      const isUuid =
+        validCategoryId &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          validCategoryId,
+        );
+
+      if (!isUuid) {
+        const defaultCat = await queryRunner.manager.query<{ id: string }[]>(
+          'SELECT id FROM categories LIMIT 1',
+        );
+        if (defaultCat.length > 0 && defaultCat[0]?.id) {
+          validCategoryId = defaultCat[0].id;
+        } else {
+          throw new BadRequestException('Hệ thống chưa có danh mục thuốc nào.');
+        }
+      }
+
       const product = new Product();
       product.sku = input.sku;
       product.name = input.name;
-      product.categoryId = input.categoryId;
+      product.categoryId = validCategoryId;
       product.safetyStockThreshold = Number(input.safetyStockThreshold) || 20;
       product.usageInstructions = input.usageInstructions || '';
       product.defaultStorage = input.defaultStorage || '';
@@ -335,18 +353,54 @@ export class ProductsService {
       return savedProduct;
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      console.error('Lỗi khi tạo thuốc mới:', err);
       throw err;
     } finally {
       await queryRunner.release();
     }
   }
 
-  async softDeleteProduct(id: string): Promise<void> {
+  async softDeleteProduct(id: string): Promise<{ success: boolean }> {
     const product = await this.productRepo.findOne({ where: { id } });
     if (!product) {
       throw new BadRequestException('Không tìm thấy thuốc');
     }
+
+    const batchRepo = this.dataSource.getRepository(Batch);
+
+    const activeStockRow = await batchRepo
+      .createQueryBuilder('b')
+      .select('COALESCE(SUM(b.quantityRemaining), 0)', 'total')
+      .where('b.productId = :id', { id })
+      .getRawOne<{ total: string }>();
+
+    if (Number(activeStockRow?.total || 0) > 0) {
+      throw new BadRequestException(
+        `Không thể xóa "${product.name}" vì vẫn còn ${activeStockRow?.total} đơn vị tồn kho.`,
+      );
+    }
+
+    const batchCount = await batchRepo.count({ where: { productId: id } });
+
+    if (batchCount === 0) {
+      try {
+        await this.dataSource
+          .getRepository(ProductUnit)
+          .delete({ productId: id });
+        await this.productRepo.delete(id);
+        return { success: true };
+      } catch (err: unknown) {
+        const dbErr = err as { code?: string };
+        if (dbErr.code !== '23503') {
+          throw err;
+        }
+      }
+    }
+
     product.isActive = false;
+    product.sku = `${product.sku}__DEL_${Date.now()}`;
     await this.productRepo.save(product);
+
+    return { success: true };
   }
 }

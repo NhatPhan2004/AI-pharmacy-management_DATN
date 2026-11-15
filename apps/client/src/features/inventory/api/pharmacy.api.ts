@@ -66,4 +66,8 @@ export const pharmacyApi = {
   deleteProduct: async (id: string): Promise<void> => {
     await apiClient.delete(`/products/${id}`);
   },
+  getCategories: async () => {
+    const res = await apiClient.get("/categories");
+    return res.data;
+  },
 };

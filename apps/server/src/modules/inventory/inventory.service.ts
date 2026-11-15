@@ -11,6 +11,7 @@ import { PurchaseOrder } from './entities/purchase-order.entity';
 import { PurchaseOrderItem } from './entities/purchase-order-item.entity';
 import { InventoryTransaction } from './entities/inventory-transaction.entity';
 import { ProductUnit } from '../products/entities/product-unit.entity';
+import { Product } from '../products/entities/product.entity';
 
 export interface LowStockAlertItem {
   productId: string;
@@ -152,17 +153,70 @@ export class InventoryService {
       throw new BadRequestException('Không tìm thấy phiếu nhập kho');
     }
 
+    const importLogs = await this.dataSource
+      .getRepository(InventoryTransaction)
+      .find({
+        where: {
+          referenceType: 'PURCHASE_ORDER',
+          referenceId: po.id,
+        },
+      });
+
+    const batchIds = importLogs.map((log) => log.batchId).filter(Boolean);
+    const batches =
+      batchIds.length > 0
+        ? await this.dataSource
+            .getRepository(Batch)
+            .createQueryBuilder('batch')
+            .where('batch.id IN (:...batchIds)', { batchIds })
+            .getMany()
+        : [];
+
     const itemsWithProduct = await Promise.all(
-      (po.items || []).map(async (item) => {
+      (po.items || []).map(async (item, index) => {
         const unit = await this.dataSource.getRepository(ProductUnit).findOne({
           where: { id: item.unitId },
           relations: ['product'],
         });
 
+        const matchedBatch =
+          batches.find(
+            (b) => unit?.productId && b.productId === unit.productId,
+          ) || batches[index];
+
+        let resolvedProduct = unit?.product;
+        if (!resolvedProduct && matchedBatch?.productId) {
+          resolvedProduct =
+            (await this.dataSource
+              .getRepository(Product)
+              .findOne({ where: { id: matchedBatch.productId } })) || undefined;
+        }
+
+        let resolvedUnit = unit;
+        if (!resolvedUnit && matchedBatch?.productId) {
+          const productUnits = await this.dataSource
+            .getRepository(ProductUnit)
+            .find({ where: { productId: matchedBatch.productId } });
+
+          resolvedUnit =
+            productUnits.find(
+              (u) =>
+                Number(item.quantity) * Number(u.conversionToBase) ===
+                Number(matchedBatch.quantityRemaining),
+            ) ||
+            productUnits.find((u) => Number(u.conversionToBase) > 1) ||
+            productUnits[0] ||
+            null;
+        }
+
         return {
           ...item,
-          product: unit?.product || { name: 'Sản phẩm', sku: 'N/A' },
-          unit: unit || undefined,
+          batchNumber: matchedBatch?.batchNumber || '—',
+          expiryDate: matchedBatch?.expiryDate
+            ? new Date(matchedBatch.expiryDate).toISOString()
+            : null,
+          product: resolvedProduct || { name: 'Sản phẩm', sku: 'N/A' },
+          unit: resolvedUnit || undefined,
         };
       }),
     );

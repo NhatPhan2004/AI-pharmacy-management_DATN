@@ -46,11 +46,16 @@ export class PurchaseOrder {
   })
   totalCost: number;
 
-  @Column({ name: 'invoice_number', nullable: true })
-  invoiceNumber: string;
+  @Column({
+    name: 'invoice_number',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  invoiceNumber?: string;
 
   @Column({ type: 'text', nullable: true })
-  note: string;
+  note?: string;
 
   @Column({ name: 'delivery_date', type: 'timestamp', nullable: true })
   deliveryDate: Date;

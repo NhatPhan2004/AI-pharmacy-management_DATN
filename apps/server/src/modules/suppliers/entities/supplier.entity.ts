@@ -11,8 +11,8 @@ export class Supplier {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 50, unique: true })
-  code: string;
+  @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
+  code?: string;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
@@ -34,4 +34,15 @@ export class Supplier {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @Column({ name: 'tax_code', type: 'varchar', length: 50, nullable: true })
+  taxCode?: string;
+
+  @Column({
+    name: 'contact_person',
+    type: 'varchar',
+    length: 150,
+    nullable: true,
+  })
+  contactPerson?: string;
 }

@@ -15,8 +15,21 @@ export interface IPurchaseOrderRow {
 export interface ISupplierItem {
   id: string;
   name: string;
+  taxCode?: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  isActive?: boolean;
 }
-
+export interface ISupplierPayload {
+  name: string;
+  taxCode?: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+}
 export interface IProductImportOption {
   id: string;
   name: string;
@@ -25,7 +38,6 @@ export interface IProductImportOption {
   units: Array<{ id: string; name: string; rate: number }>;
 }
 
-// Định nghĩa interface thay thế hoàn toàn cho 'any'
 interface IPurchaseOrderItemRelation {
   id: string;
   batchNumber?: string;
@@ -164,33 +176,45 @@ export const inventoryApi = {
   },
 
   getSuppliers: async (): Promise<ISupplierItem[]> => {
-    try {
-      const res = await apiClient.get<
-        { data?: ISupplierItem[] } | ISupplierItem[]
-      >("/inventory/suppliers");
-      const list =
-        "data" in res.data && res.data.data
-          ? res.data.data
-          : (res.data as ISupplierItem[]);
-      if (Array.isArray(list) && list.length > 0) {
-        return list.map((s: ISupplierItem) => ({
-          id: s.id,
-          name: s.name,
-        }));
-      }
-    } catch (err: unknown) {
-      console.warn("Chưa tải được NCC từ server, dùng UUID thật từ DB:", err);
-    }
+    const res = await apiClient.get<
+      { data?: ISupplierItem[] } | ISupplierItem[]
+    >("/suppliers");
+    const list =
+      "data" in res.data && Array.isArray(res.data.data)
+        ? res.data.data
+        : (res.data as ISupplierItem[]);
+    return Array.isArray(list) ? list : [];
+  },
 
-    return [
-      {
-        id: "29ebd603-071e-4c76-96a9-85e8d99c37ce",
-        name: "Dược Hậu Giang (DHG Pharma)",
-      },
-      {
-        id: "38010c64-d427-4632-a4fa-38891aa572a1",
-        name: "Dược Phẩm Domesco",
-      },
-    ];
+  createSupplier: async (payload: ISupplierPayload): Promise<ISupplierItem> => {
+    const res = await apiClient.post<{ data?: ISupplierItem } | ISupplierItem>(
+      "/suppliers",
+      payload,
+    );
+    return "data" in res.data && res.data.data
+      ? res.data.data
+      : (res.data as ISupplierItem);
+  },
+
+  updateSupplier: async (
+    id: string,
+    payload: Partial<ISupplierPayload>,
+  ): Promise<ISupplierItem> => {
+    const res = await apiClient.patch<{ data?: ISupplierItem } | ISupplierItem>(
+      `/suppliers/${id}`,
+      payload,
+    );
+    return "data" in res.data && res.data.data
+      ? res.data.data
+      : (res.data as ISupplierItem);
+  },
+
+  deleteSupplier: async (id: string): Promise<{ success: boolean }> => {
+    const res = await apiClient.delete<
+      { data?: { success: boolean } } | { success: boolean }
+    >(`/suppliers/${id}`);
+    return "data" in res.data && res.data.data
+      ? res.data.data
+      : (res.data as { success: boolean });
   },
 };

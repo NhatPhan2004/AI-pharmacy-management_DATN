@@ -18,6 +18,8 @@ import { ProductUnit } from './modules/products/entities/product-unit.entity';
 import { PurchaseOrder } from './modules/inventory/entities/purchase-order.entity';
 import { PurchaseOrderItem } from './modules/inventory/entities/purchase-order-item.entity';
 import { InventoryTransaction } from './modules/inventory/entities/inventory-transaction.entity';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { SuppliersModule } from './modules/suppliers/suppliers.module';
 
 @Module({
   imports: [
@@ -50,6 +52,9 @@ import { InventoryTransaction } from './modules/inventory/entities/inventory-tra
     AuthModule,
     UsersModule,
     ProductsModule,
+    InventoryModule,
+    CategoriesModule,
+    SuppliersModule,
     InventoryModule,
   ],
 })
