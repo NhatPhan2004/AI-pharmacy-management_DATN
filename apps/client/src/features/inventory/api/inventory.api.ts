@@ -12,6 +12,21 @@ export interface IPurchaseOrderRow {
   itemCount: string | number;
 }
 
+export interface INearExpiryBatch {
+  id: string;
+  productId: string;
+  batchNumber: string;
+  expiryDate: string;
+  quantityRemaining: number | string;
+  importPrice: number | string;
+  status: string;
+  product?: {
+    id: string;
+    name: string;
+    sku: string;
+  };
+}
+
 export interface ISupplierItem {
   id: string;
   name: string;
@@ -35,7 +50,12 @@ export interface IProductImportOption {
   name: string;
   sku: string;
   baseUnit: string;
-  units: Array<{ id: string; name: string; rate: number }>;
+  units: Array<{
+    id: string;
+    name: string;
+    rate: number;
+    sellingPrice: number;
+  }>;
 }
 
 interface IPurchaseOrderItemRelation {
@@ -171,6 +191,7 @@ export const inventoryApi = {
         id: String(u.id),
         name: u.unitName,
         rate: Number(u.conversionToBase || 1),
+        sellingPrice: Number(u.sellingPrice || 0),
       })),
     }));
   },
@@ -216,5 +237,25 @@ export const inventoryApi = {
     return "data" in res.data && res.data.data
       ? res.data.data
       : (res.data as { success: boolean });
+  },
+
+  getPurchaseOrders: async (): Promise<IPurchaseOrderRow[]> => {
+    return inventoryApi.getHistory();
+  },
+
+  getNearExpiryBatches: async (days = 90): Promise<INearExpiryBatch[]> => {
+    const res = await apiClient.get<
+      INearExpiryBatch[] | { data?: INearExpiryBatch[] }
+    >("/inventory/near-expiry", {
+      params: { days },
+    });
+
+    const responseData = res.data;
+
+    if (Array.isArray(responseData)) {
+      return responseData;
+    }
+
+    return Array.isArray(responseData.data) ? responseData.data : [];
   },
 };

@@ -2,7 +2,7 @@
 import React from "react";
 import { useAuth } from "../auth/hooks/useAuth";
 import { RoleType } from "@pharmacy/shared";
-import { AdminDashboard } from "./components/AdminDashboard";
+import { AdminDashboardPage } from "../dashboard/AdminDashboardPage";
 import { ManagerDashboard } from "./components/ManagerDashboard";
 import { StaffDashboard } from "./components/StaffDashboard";
 
@@ -11,7 +11,7 @@ export const DashboardRouter: React.FC = () => {
 
   switch (user?.role) {
     case RoleType.ADMIN:
-      return <AdminDashboard />;
+      return <AdminDashboardPage userName={user?.fullName} />;
     case RoleType.MANAGER:
       return <ManagerDashboard />;
     case RoleType.STAFF:

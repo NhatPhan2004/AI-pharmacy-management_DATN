@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Layers,
   AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import styles from "../page/InventoryWarehousePage.module.scss";
 import type { IProductImportOption, ISupplierItem } from "../api/inventory.api";
@@ -43,6 +44,19 @@ interface Props {
   onRemoveProductGroup: (prodIdx: number) => void;
   onSubmit: () => void;
 }
+
+const generateUniqueBatchCode = (expiryDate?: string): string => {
+  const randomTag = Math.random().toString(36).substring(2, 6).toUpperCase();
+  if (expiryDate) {
+    const compactExp = expiryDate.replace(/-/g, "").slice(2);
+    return `LOT-${compactExp}-${randomTag}`;
+  }
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  return `LOT-${yy}${mm}${dd}-${randomTag}`;
+};
 
 export const StockImportTab: React.FC<Props> = ({
   suppliers,
@@ -144,161 +158,235 @@ export const StockImportTab: React.FC<Props> = ({
             mặt hàng từ Database.
           </div>
         ) : (
-          receiptGroups.map((group, prodIdx) => (
-            <div key={group.productId} className={styles.productReceiptCard}>
-              <div className={styles.productHeader}>
-                <div className={styles.productInfo}>
-                  <span className={styles.name}>{group.productName}</span>
-                  <span className={styles.sku}>SKU: {group.sku}</span>
-                </div>
-                <div className={styles.headerActions}>
-                  <button
-                    type="button"
-                    onClick={() => onAddBatch(prodIdx)}
-                    className={styles.btnAddBatch}
-                  >
-                    <Layers size={13} /> + Thêm Lô
-                  </button>
-                  <button
-                    type="button"
-                    title="Xóa toàn bộ thuốc này"
-                    onClick={() => onRemoveProductGroup(prodIdx)}
-                    className={styles.btnRemoveProduct}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
+          receiptGroups.map((group, prodIdx) => {
+            const sourceProd = availableProducts.find(
+              (p) => p.id === group.productId,
+            );
 
-              <table className={styles.batchSubTable}>
-                <thead>
-                  <tr>
-                    <th>Số Lô (Batch) *</th>
-                    <th>Hạn Dùng (HSD) *</th>
-                    <th>Đơn Vị & SL *</th>
-                    <th>Giá Nhập (đ)</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {group.batches.map((batch, batchIdx) => (
-                    <tr key={batch.id}>
-                      <td>
-                        <input
-                          placeholder="VD: LOT-2026-A"
-                          value={batch.batchNumber}
-                          onChange={(e) =>
-                            onUpdateBatch(
-                              prodIdx,
-                              batchIdx,
-                              "batchNumber",
-                              e.target.value,
-                            )
-                          }
-                          required
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="date"
-                          value={batch.expiryDate}
-                          onChange={(e) =>
-                            onUpdateBatch(
-                              prodIdx,
-                              batchIdx,
-                              "expiryDate",
-                              e.target.value,
-                            )
-                          }
-                          required
-                        />
-                        {batch.isDateInvalid && (
-                          <span className={styles.errorTextSmall}>
-                            <AlertCircle size={10} />
-                            HSD đã hết hoặc quá gần
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <div className={styles.qtyGroup}>
-                          <select
-                            value={batch.unitId}
-                            onChange={(e) =>
-                              onUpdateBatch(
-                                prodIdx,
-                                batchIdx,
-                                "unitId",
-                                e.target.value,
-                              )
-                            }
-                          >
-                            {group.units.map((u) => (
-                              <option key={u.id} value={u.id}>
-                                {u.name}
-                              </option>
-                            ))}
-                          </select>
-                          <input
-                            type="number"
-                            min="1"
-                            value={batch.quantity}
-                            onChange={(e) =>
-                              onUpdateBatch(
-                                prodIdx,
-                                batchIdx,
-                                "quantity",
-                                Number(e.target.value),
-                              )
-                            }
-                            required
-                          />
-                        </div>
-                        <span className={styles.conversionText}>
-                          ={" "}
-                          {(batch.quantity * batch.rate).toLocaleString(
-                            "vi-VN",
-                          )}{" "}
-                          {group.baseUnit}
-                        </span>
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          min="0"
-                          step="1000"
-                          value={batch.costPrice}
-                          onChange={(e) =>
-                            onUpdateBatch(
-                              prodIdx,
-                              batchIdx,
-                              "costPrice",
-                              Number(e.target.value),
-                            )
-                          }
-                          required
-                        />
-                        <span className={styles.lineTotalText}>
-                          {batch.lineTotal.toLocaleString("vi-VN")} đ
-                        </span>
-                      </td>
-                      <td className={styles.colCenter}>
-                        {group.batches.length > 1 && (
-                          <button
-                            type="button"
-                            title="Xóa lô này"
-                            onClick={() => onRemoveBatch(prodIdx, batchIdx)}
-                            className={styles.btnDeleteBatch}
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        )}
-                      </td>
+            return (
+              <div key={group.productId} className={styles.productReceiptCard}>
+                <div className={styles.productHeader}>
+                  <div className={styles.productInfo}>
+                    <span className={styles.name}>{group.productName}</span>
+                    <span className={styles.sku}>SKU: {group.sku}</span>
+                  </div>
+                  <div className={styles.headerActions}>
+                    <button
+                      type="button"
+                      onClick={() => onAddBatch(prodIdx)}
+                      className={styles.btnAddBatch}
+                    >
+                      <Layers size={13} /> + Thêm Lô
+                    </button>
+                    <button
+                      type="button"
+                      title="Xóa toàn bộ thuốc này"
+                      onClick={() => onRemoveProductGroup(prodIdx)}
+                      className={styles.btnRemoveProduct}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <table className={styles.batchSubTable}>
+                  <thead>
+                    <tr>
+                      <th>Số Lô (Batch) *</th>
+                      <th>Hạn Dùng (HSD) *</th>
+                      <th>Đơn Vị & SL *</th>
+                      <th>Giá Nhập (đ)</th>
+                      <th></th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))
+                  </thead>
+                  <tbody>
+                    {group.batches.map((batch, batchIdx) => {
+                      const selectedUnit =
+                        group.units.find((u) => u.id === batch.unitId) ||
+                        sourceProd?.units.find((u) => u.id === batch.unitId);
+
+                      const unitSellingPrice = Number(
+                        selectedUnit?.sellingPrice || 0,
+                      );
+                      const unitName = selectedUnit?.name || group.baseUnit;
+
+                      const profitDiff =
+                        batch.costPrice > 0 && unitSellingPrice > 0
+                          ? unitSellingPrice - batch.costPrice
+                          : null;
+
+                      const profitPercent =
+                        profitDiff !== null && unitSellingPrice > 0
+                          ? Math.round((profitDiff / unitSellingPrice) * 100)
+                          : null;
+
+                      return (
+                        <tr key={batch.id}>
+                          <td>
+                            <div className={styles.batchInputGroup}>
+                              <input
+                                placeholder="VD: LOT-2026-A"
+                                value={batch.batchNumber}
+                                onChange={(e) =>
+                                  onUpdateBatch(
+                                    prodIdx,
+                                    batchIdx,
+                                    "batchNumber",
+                                    e.target.value,
+                                  )
+                                }
+                                required
+                              />
+                              <button
+                                type="button"
+                                title="Tự động tạo mã lô không trùng"
+                                onClick={() =>
+                                  onUpdateBatch(
+                                    prodIdx,
+                                    batchIdx,
+                                    "batchNumber",
+                                    generateUniqueBatchCode(batch.expiryDate),
+                                  )
+                                }
+                                className={styles.btnAutoBatch}
+                              >
+                                <Sparkles size={13} />
+                              </button>
+                            </div>
+                          </td>
+
+                          <td>
+                            <input
+                              type="date"
+                              value={batch.expiryDate}
+                              onChange={(e) =>
+                                onUpdateBatch(
+                                  prodIdx,
+                                  batchIdx,
+                                  "expiryDate",
+                                  e.target.value,
+                                )
+                              }
+                              required
+                            />
+                            {batch.isDateInvalid && (
+                              <span className={styles.errorTextSmall}>
+                                <AlertCircle size={10} />
+                                HSD đã hết hoặc quá gần
+                              </span>
+                            )}
+                          </td>
+
+                          <td>
+                            <div className={styles.qtyGroup}>
+                              <select
+                                value={batch.unitId}
+                                onChange={(e) =>
+                                  onUpdateBatch(
+                                    prodIdx,
+                                    batchIdx,
+                                    "unitId",
+                                    e.target.value,
+                                  )
+                                }
+                              >
+                                {group.units.map((u) => (
+                                  <option key={u.id} value={u.id}>
+                                    {u.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <input
+                                type="number"
+                                min="1"
+                                value={batch.quantity}
+                                onChange={(e) =>
+                                  onUpdateBatch(
+                                    prodIdx,
+                                    batchIdx,
+                                    "quantity",
+                                    Number(e.target.value),
+                                  )
+                                }
+                                required
+                              />
+                            </div>
+                            <span className={styles.conversionText}>
+                              ={" "}
+                              {(batch.quantity * batch.rate).toLocaleString(
+                                "vi-VN",
+                              )}{" "}
+                              {group.baseUnit}
+                            </span>
+                          </td>
+
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              step="1000"
+                              value={batch.costPrice}
+                              onChange={(e) =>
+                                onUpdateBatch(
+                                  prodIdx,
+                                  batchIdx,
+                                  "costPrice",
+                                  Number(e.target.value),
+                                )
+                              }
+                              required
+                            />
+                            <span className={styles.lineTotalText}>
+                              Thành tiền:{" "}
+                              {batch.lineTotal.toLocaleString("vi-VN")} đ
+                            </span>
+                            {unitSellingPrice > 0 && (
+                              <span className={styles.sellingRefText}>
+                                Giá bán niêm yết:{" "}
+                                <strong>
+                                  {unitSellingPrice.toLocaleString("vi-VN")} đ
+                                </strong>
+                                /{unitName}
+                                {profitDiff !== null && (
+                                  <span
+                                    className={
+                                      profitDiff > 0
+                                        ? styles.marginPositive
+                                        : styles.marginNeutral
+                                    }
+                                  >
+                                    {" "}
+                                    (
+                                    {profitDiff > 0
+                                      ? `Lãi ${profitPercent}%`
+                                      : `Chênh ${profitDiff.toLocaleString("vi-VN")} đ`}
+                                    )
+                                  </span>
+                                )}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className={styles.colCenter}>
+                            {group.batches.length > 1 && (
+                              <button
+                                type="button"
+                                title="Xóa lô này"
+                                onClick={() => onRemoveBatch(prodIdx, batchIdx)}
+                                className={styles.btnDeleteBatch}
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })
         )}
       </div>
 

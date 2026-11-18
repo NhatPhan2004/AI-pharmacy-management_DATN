@@ -24,7 +24,12 @@ export interface IReceiptProductGroup {
   productName: string;
   sku: string;
   baseUnit: string;
-  units: Array<{ id: string; name: string; rate: number }>;
+  units: Array<{
+    id: string;
+    name: string;
+    rate: number;
+    sellingPrice?: number;
+  }>;
   batches: IBatchRow[];
 }
 
